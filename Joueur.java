@@ -5,9 +5,13 @@ public class Joueur {
     private ArrayList<Pion> ListePionsEnAttente;
     private int Couleur;
 
-    public Joueur(){
+    public Joueur(int couleur){
+        this.Couleur = couleur;
         this.ListePionsEnJeu = new ArrayList<Pion>();
         this.ListePionsEnAttente = new ArrayList<Pion>();
+        for (int i = 0; i < 4; i++) {
+            this.ListePionsEnAttente.add(new Pion(couleur));
+        }
     }
     public ArrayList<Pion> getListePionsEnJeu() {
         return this.ListePionsEnJeu;

@@ -7,8 +7,8 @@ public class Pion {
     private int PositionX;
     private int PositionY;
 
-    public Pion(){
-        this.EstEnJeu = false;
+    public Pion(int couleur){
+        this.Couleur = couleur;
     }
     
     public int getCouleur() {
@@ -20,6 +20,11 @@ public class Pion {
     public int getPositionY() {
         return this.PositionY;
     }
+    public void setPositionXY(int positionX,int positionY) {
+        this.PositionX = positionX;
+        this.PositionY = positionY;
+    }
+    
 
     public void setPositionX(int positionX) {
         this.PositionX = positionX;

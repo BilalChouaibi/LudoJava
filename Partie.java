@@ -3,6 +3,14 @@ import java.util.ArrayList;
 public class Partie {
     private Plateau plateau;
     private Joueur[] listeJoueurs;
+    
+    public Plateau getPlateau() {
+        return this.plateau;
+    }
+
+    public Partie(){
+        this.plateau = new Plateau();
+    }
 
         /*
     Convention : 
@@ -27,23 +35,35 @@ public class Partie {
     }
 
     public void PlacerPion(Joueur joueur){
+        int X = -1;
+        int Y = -1;
         int Couleur = joueur.getCouleur();
-        if(joueur.getListePionsEnAttente().size() > 0){
+        if(joueur.getListePionsEnAttente().size() > 0){ 
             int size = joueur.getListePionsEnAttente().size() - 1;
+            Pion pion = joueur.getListePionsEnAttente().get(size);
             if(Couleur == 0){
-                this.plateau.getBoard()[6][1].getListePion().add(joueur.getListePionsEnAttente().get(size));
+                X = 6;
+                Y = 1;
+                this.plateau.getBoard()[X][Y].getListePion().add(pion);
             }
-            if(Couleur == 1){
-                this.plateau.getBoard()[1][8].getListePion().add(joueur.getListePionsEnAttente().get(size));
+            else if(Couleur == 1){
+                X = 1;
+                Y = 8;
+                this.plateau.getBoard()[X][Y].getListePion().add(pion);
             }
-            if(Couleur == 2){
-                this.plateau.getBoard()[8][13].getListePion().add(joueur.getListePionsEnAttente().get(size));
+            else if(Couleur == 2){
+                X = 8;
+                Y = 13;
+                this.plateau.getBoard()[X][Y].getListePion().add(pion);
             }
-            if(Couleur == 3){
-                this.plateau.getBoard()[6][1].getListePion().add(joueur.getListePionsEnAttente().get(size));
+            else if(Couleur == 3){
+                 X = 13;
+                 Y = 6;
+                this.plateau.getBoard()[X][Y].getListePion().add(pion);
             }
-            joueur.getListePionsEnJeu().add(joueur.getListePionsEnAttente().get(size));
-            joueur.getListePionsEnAttente().remove(size);
+            pion.setPositionXY(X, Y);
+            joueur.getListePionsEnJeu().add(pion);
+            joueur.getListePionsEnAttente().remove(pion);
         }
     }
 
@@ -54,10 +74,16 @@ public class Partie {
         int Ydep = Y;
 
          /* A checker Chaque zone :
-          ZONE HAUTE    X <= 5 && 6 <= Y <= 8
-          ZONE DROITE   6 <= X <= 8 && 9 <= Y <= 14
-          ZONE GAUCHE   6 <= X <= 8 && Y <= 5
-          ZONE BASSE    9 <= X <= 14 && 6 <= Y <= 8
+          ZONE HAUTE  (ROUGE)  X <= 5 && 6 <= Y <= 8
+          ZONE DROITE (BLEUE)  6 <= X <= 8 && 9 <= Y <= 14
+          ZONE GAUCHE (VERTE)  6 <= X <= 8 && Y <= 5
+          ZONE BASSE  (JAUNE)  9 <= X <= 14 && 6 <= Y <= 8
+
+          LIGNES (Case d'entrée):
+          VERT :  X = 7  ; Y = 0
+          ROUGE : X = 0  ; Y = 7
+          Bleu :  X = 7  ; Y = 14
+          Jaune : X = 14  ; Y = 7
            */
 
         if(X <= 5 && 6 <= Y && Y<= 8){
@@ -72,8 +98,25 @@ public class Partie {
                 }
             } 
             
-            if((X == 0 && Y != 8) && coupde > 0){
-                if(Y + coupde > 8){
+            if(((X == 0 && Y != 8) || Y == 7) && coupde > 0){
+                if (Y == 6){
+                Y += 1;
+                coupde -= 1;
+                }
+                if((pion.getCouleur() == 0 ) && Y == 7 && (coupde > 0)){
+                    if(X + coupde == 6) { // Gagnant
+                        this.CouleurToJoueur(pion.getCouleur()).getListePionsEnJeu().remove(pion);
+                        pion.setPositionXY(-1, -1);
+                    } else if (X + coupde > 6){
+                        while(X < 6){
+                            X++;
+                            coupde--;
+                        }
+                        X -= coupde;
+                    } else {
+                        X += coupde;
+                    }
+                } else if(Y + coupde > 8){
                     coupde -= (8-Y);
                     Y = 8;
                 } else{
@@ -94,6 +137,7 @@ public class Partie {
         } else if(9 <= X  && X <= 14 && 6 <= Y && Y <= 8){
 
             if (Y == 8 && X != 14){
+                
                 if( X + coupde > 14 ){
                     coupde -= (14 - X);
                     X = 14;
@@ -103,8 +147,25 @@ public class Partie {
                 }
             } 
             
-            if((X == 14 && Y != 6) && coupde > 0){
-                if(Y - coupde < 6){
+            if(((X == 14 && Y != 6)  || Y == 7 ) && coupde > 0){
+                if (Y == 8){
+                Y -= 1;
+                coupde -= 1;
+                }
+                if((pion.getCouleur() == 3 ) && Y == 7 && (coupde > 0)){
+                    if(X - coupde == 8) { // Gagnant
+                        this.CouleurToJoueur(pion.getCouleur()).getListePionsEnJeu().remove(pion);
+                        pion.setPositionXY(-1, -1);
+                    } else if (X - coupde < 8){
+                        while(X < 8){
+                            X--;
+                            coupde--;
+                        }
+                        X += coupde;
+                    } else {
+                        X -= coupde;
+                    }
+                } else if (Y - coupde < 6){
                     coupde -= (Y - 6);
                     Y = 6;
                 } else{
@@ -125,7 +186,10 @@ public class Partie {
 
         } else if(6 <= X && X <= 8 && 9 <= Y && Y <= 14){
 
-            if (X == 6 && Y != 14){
+            
+
+            if ((X == 6 && Y != 14) && coupde > 0){
+                
                 if( Y + coupde > 14 ){
                     coupde -= (14 - Y);
                     Y = 14;
@@ -135,7 +199,25 @@ public class Partie {
                 }
             } 
             
-            if((Y == 14 && X != 8) && coupde > 0){
+            if(((Y == 14 && X != 8) || X == 7) && coupde > 0){
+                if(X == 6){
+                X += 1;
+                coupde -= 1;
+                }
+                if((pion.getCouleur() == 2 ) && X == 7 && (coupde > 0)){
+                    if(Y - coupde == 8) { // Gagnant
+                        this.CouleurToJoueur(pion.getCouleur()).getListePionsEnJeu().remove(pion);
+                        pion.setPositionXY(-1, -1);
+                    } else if (Y - coupde < 8){
+                        while(Y > 8){
+                            Y--;
+                            coupde--;
+                        }
+                        Y += coupde;
+                    } else {
+                        Y -= coupde;
+                    }
+                }
                 if(X + coupde > 8){
                     coupde -= (8 - X);
                     X = 6;
@@ -156,7 +238,12 @@ public class Partie {
             }
 
         } else if(6 <= X  && X <= 8 && Y <= 5){
+
+            
+
+                
             if (X == 8 && Y != 0){
+                
                 if( Y  - coupde < 0  ){
                     coupde -= Y;
                     Y = 0;
@@ -166,7 +253,25 @@ public class Partie {
                 }
             } 
             
-            if((Y == 0 && X != 6) && coupde > 0){
+            if(((Y == 0 && X != 6) || X == 7) && coupde > 0){
+                if (X == 8){
+                X -= 1;
+                coupde -= 1;
+                }
+                if((pion.getCouleur() == 0 ) && X == 7 && (coupde > 0)){
+                    if(X + coupde == 6) { // Gagnant
+                        this.CouleurToJoueur(pion.getCouleur()).getListePionsEnJeu().remove(pion);
+                        pion.setPositionXY(-1, -1);
+                    } else if (X + coupde > 6){
+                        while(X < 6){
+                            X++;
+                            coupde--;
+                        }
+                        X -= coupde;
+                    } else {
+                        X += coupde;
+                    }
+                }
                 if(X - coupde < 6){
                     coupde -= (8 - X);
                     X = 6;
@@ -188,11 +293,15 @@ public class Partie {
         }
         
         this.plateau.getBoard()[Xdep][Ydep].getListePion().remove(pion);
-        if((! this.plateau.getBoard()[X][Y].getListePion().isEmpty()) && this.plateau.getBoard()[X][Y].getListePion().get(0).getCouleur() != pion.getCouleur()){
-            this.CouleurToJoueur(this.plateau.getBoard()[X][Y].getListePion().get(0).getCouleur()).getListePionsEnAttente().add();
-            this.CouleurToJoueur(this.plateau.getBoard()[X][Y].getListePion().get(0).getCouleur()).getListePionsEnJeu().remove(0);
-            this.plateau.getBoard()[X][Y].getListePion().remove(0);
+        if((! this.plateau.getBoard()[X][Y].getListePion().isEmpty()) && this.plateau.getBoard()[X][Y].getListePion().get(0).getCouleur() != pion.getCouleur() && (!this.plateau.isSafeZone(X, Y))){
+            Joueur j = this.CouleurToJoueur(this.plateau.getBoard()[X][Y].getListePion().get(0).getCouleur());
+            for (Pion p : this.plateau.getBoard()[X][Y].getListePion()) {
+                j.getListePionsEnAttente().add(p);
+                j.getListePionsEnJeu().remove(p);
+                p.setPositionXY(-1, -1);
+            }
         }
+        pion.setPositionXY(X, Y);
         this.plateau.getBoard()[X][Y].getListePion().add(pion);
 
 

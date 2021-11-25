@@ -3,8 +3,13 @@ import java.util.ArrayList;
 public class test {
 
     public static void main(String[] args) {
-        Plateau test = new Plateau();
-        test.Display();
+        Partie test = new Partie();
+        Joueur joueurtest = new Joueur(0);
+        test.PlacerPion(joueurtest);
+        System.out.println( "X : " + joueurtest.getListePionsEnJeu().get(0).getPositionX() + " Y : " + joueurtest.getListePionsEnJeu().get(0).getPositionY());
+        test.Move(joueurtest.getListePionsEnJeu().get(0), 4);
+        System.out.println( "X : " + joueurtest.getListePionsEnJeu().get(0).getPositionX() + " Y : " + joueurtest.getListePionsEnJeu().get(0).getPositionY());
+        test.getPlateau().Display();
        /* int[][] test = new int[15][15];
         int index = 0;
         while(index < 6){
