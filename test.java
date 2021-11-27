@@ -1,15 +1,47 @@
-import java.util.ArrayList;
-
 public class test {
 
     public static void main(String[] args) {
-        Partie test = new Partie();
-        Joueur joueurtest = new Joueur(0);
-        test.PlacerPion(joueurtest);
+        
+        Partie test = new Partie(4);
+        //Joueur joueurtest = test.getListeJoueurs()[2];
+        //test.PlacerPion(test.getListeJoueurs()[2]);
+        test.PlacerPionXY(test.getListeJoueurs()[0], 8, 0);
+
+        test.Move(test.getListeJoueurs()[0].getListePions().get(0), 3);
+        test.Move(test.getListeJoueurs()[0].getListePions().get(0), 4);
+        //System.out.println(test.getListeJoueurs()[2].getListePions().get(0).getEstEnJeu());
+        //System.out.println(test.getListeJoueurs()[2].getListePions().get(0).getEstEnJeu());
+        /*
+        System.out.println(joueurtest.getListePionsEnJeu().size());
         System.out.println( "X : " + joueurtest.getListePionsEnJeu().get(0).getPositionX() + " Y : " + joueurtest.getListePionsEnJeu().get(0).getPositionY());
-        test.Move(joueurtest.getListePionsEnJeu().get(0), 4);
         System.out.println( "X : " + joueurtest.getListePionsEnJeu().get(0).getPositionX() + " Y : " + joueurtest.getListePionsEnJeu().get(0).getPositionY());
+        test.Move(joueurtest.getListePionsEnJeu().get(0), 5);
+        System.out.println(joueurtest.getListePionsEnJeu().size());
         test.getPlateau().Display();
+        System.out.println("aaa :" + test.getPlateau().getBoard()[6][0].getCouleur());*/
+        test.getPlateau().Display();
+        test.getListeJoueurs()[2].AfficherListePions();
+
+
+        /*while(true){
+            Random rand = new Random(); 
+            int nombreAleatoire = rand.nextInt(6 - 1 + 1) + 1;
+            System.out.println(nombreAleatoire);
+            test.Move(joueurtest.getListePionsEnJeu().get(0), nombreAleatoire);
+            System.out.flush();
+            test.getPlateau().Display();
+            try
+            {
+                Thread.sleep(1000);
+            }
+            catch(InterruptedException ex)
+            {
+            Thread.currentThread().interrupt();
+            }
+            
+
+        }*/
+        
        /* int[][] test = new int[15][15];
         int index = 0;
         while(index < 6){

@@ -6,9 +6,32 @@ public class Pion {
     private boolean EstEnJeu;
     private int PositionX;
     private int PositionY;
+    private int Xinitial;
+    private int Yinitial;
 
-    public Pion(int couleur){
+    public Pion(int couleur,int id){
         this.Couleur = couleur;
+        this.id = id;
+        this.Xinitial = 0;
+        this.Yinitial = 0;
+        this.EstEnJeu = false;
+    }
+
+    public void setEstEnJeu(boolean estEnJeu) {
+        this.EstEnJeu = estEnJeu;
+    }
+
+    public void setXYinitial(int Xinitial, int Yinitial) {
+        this.Xinitial = Xinitial;
+        this.Yinitial = Yinitial;
+    }
+
+    public int getXinitial() {
+        return this.Xinitial;
+    }
+
+    public int getYinitial() {
+        return this.Yinitial;
     }
     
     public int getCouleur() {

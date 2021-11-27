@@ -1,27 +1,34 @@
 import java.util.ArrayList;
 
 public class Joueur {
-    private ArrayList<Pion> ListePionsEnJeu;
-    private ArrayList<Pion> ListePionsEnAttente;
+    private ArrayList<Pion> ListePions;
     private int Couleur;
 
     public Joueur(int couleur){
         this.Couleur = couleur;
-        this.ListePionsEnJeu = new ArrayList<Pion>();
-        this.ListePionsEnAttente = new ArrayList<Pion>();
+        this.ListePions = new ArrayList<Pion>();
         for (int i = 0; i < 4; i++) {
-            this.ListePionsEnAttente.add(new Pion(couleur));
+            this.ListePions.add(new Pion(couleur,i+1));
         }
     }
-    public ArrayList<Pion> getListePionsEnJeu() {
-        return this.ListePionsEnJeu;
-    }
-
-    public ArrayList<Pion> getListePionsEnAttente() {
-        return this.ListePionsEnAttente;
+    public ArrayList<Pion> getListePions() {
+        return this.ListePions;
     }
 
     public int getCouleur() {
         return this.Couleur;
+    }
+
+    public void AfficherListePions(){
+        System.out.println("Liste des pions : ");
+        for (Pion pion : this.ListePions) {
+            if(pion.getEstEnJeu()){
+              System.out.println( + pion.getId() + " (En jeu)");  
+            }else{
+                System.out.println( + pion.getId() + " (En Attente)");
+            }
+            
+        }
+
     }
 }
