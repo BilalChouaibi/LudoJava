@@ -1,14 +1,119 @@
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
 
 public class Partie {
     private Plateau plateau;
     private Joueur[] listeJoueurs;
     private int nbjoueurs;
 
-    
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        clearScreen();
+        System.out.println("Bievenue dans ce simulateur du jeu du Ludo");
+        System.out.println("Veuillez saisr le nombre de joueur (Entre 2 et 4)");
+        String userinput = scan.nextLine();
+
+        while (!(userinput.equals("2") || userinput.equals("3") || userinput.equals("4") || userinput.equals("1"))){
+            clearScreen();
+            System.out.println("Action incorrecte veuillez saisir un nombre entre 2 et 4");
+            userinput = scan.nextLine();
+
+        }
+        int nbjoueurs=Integer.parseInt(userinput);
+        Partie partie = new Partie(nbjoueurs);
+        clearScreen();
+        Random rand = new Random(); 
+        int nombreAleatoire;
+        int nbcoups;
+        while(!partie.EstFinie()){
+            for (int i = 0; i < partie.listeJoueurs.length; i++) {
+                clearScreen();
+                partie.getPlateau().Display();
+                if(partie.getListeJoueurs()[i] != null){
+                
+                    System.out.println("C'est au joueur " + partie.idJoueurToAffichage(i) + " de jouer");
+                    System.out.println("Appuyez sur entrée..");
+                    userinput = scan.nextLine();
+                    nombreAleatoire = rand.nextInt(6 - 1 + 1) + 1;
+                    System.out.println("Le nombre tiré est " + nombreAleatoire);
+                    if(partie.getListeJoueurs()[i].AdesPionsEnjeu() || nombreAleatoire == 6){
+                        nbcoups = 1;
+                        while(nbcoups > 0 ){
+                            System.out.println("Quel pion voulez vous bouger ou faire entrer dans le plateau ?");
+                            userinput = scan.nextLine();
+                            while (!(userinput.equals("2") || userinput.equals("3") || userinput.equals("4") || userinput.equals("1"))) {
+                                System.out.println("Action incorrecte veuillez saisir un nombre entre 1 et 4");
+                                userinput = scan.nextLine();
+                    
+                            }
+                            int id = Integer.parseInt(userinput);
+                            Pion p = partie.getListeJoueurs()[i].IdToPion(id);
+                            if(p != null){
+                                if (nombreAleatoire == 6 && !p.getEstEnJeu()) {
+                                    partie.PlacerPion(partie.getListeJoueurs()[i],p);
+                                    clearScreen();
+                                    partie.getPlateau().Display();
+                                    nombreAleatoire = rand.nextInt(6 - 1 + 1) + 1;
+                                    System.out.println("Nouveau nombre tiré : " + nombreAleatoire);
+                                    nbcoups++;
+
+                                } else if (p.getEstEnJeu()){
+                                    partie.Move(p, nombreAleatoire);
+                                    clearScreen();
+                                    partie.getPlateau().Display();
+                                } else{
+                                    System.out.println("Erreur, il faut faire un 6 pour placer un pion ou votre pion est déjà en jeu");
+                                    nbcoups++;
+                                }
+                                if(nombreAleatoire == 6){
+                                nbcoups++;
+                                nombreAleatoire = rand.nextInt(6 - 1 + 1) + 1;
+                                System.out.println("Nouveau nombre tiré : " + nombreAleatoire);
+                                }
+                            } else{
+                                System.out.println("Pion inexisant");
+                                nbcoups++;
+                            }
+                            
+
+                            nbcoups--;
+                        }
+                    }
+                }
+            }
+            
+            System.out.println("");
+            
+
+
+        }
+
+
+    }
+
+    public boolean EstFinie(){
+        for (Joueur joueur : listeJoueurs) {
+            if((joueur != null ) && joueur.getListePions().isEmpty()){
+                return true;
+            }
+        }
+        return false;
+    }
     
     public Plateau getPlateau() {
         return this.plateau;
+    }
+
+    public String idJoueurToAffichage(int id){
+        String s = (id == 0 ? "\u001B[32m" + "Vert" : id == 1 ? "\u001B[31m" + "Rouge" : id == 2 ? "\u001B[34m" + "Bleu" : id == 3 ? "\u001B[33m" + "Jaune" : "");
+        s+= "\u001B[0m";
+        return s;
+    }
+
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 
     public Partie(int nbjoueurs){
@@ -73,7 +178,7 @@ public class Partie {
                 for (int j = 13; j < 15; j++) {
                     this.plateau.getBoard()[i][j] = new Case(this.listeJoueurs[1].getListePions().get(tmp),i,j);
                     this.listeJoueurs[1].getListePions().get(tmp).setPositionXY(i,j);
-                    this.listeJoueurs[2].getListePions().get(tmp).setXYinitial(i,j);
+                    this.listeJoueurs[1].getListePions().get(tmp).setXYinitial(i,j);
                     tmp++;
                 }
             }
@@ -84,7 +189,7 @@ public class Partie {
                     for (int j = 0; j < 2; j++) {
                         this.plateau.getBoard()[i][j] = new Case(this.listeJoueurs[3].getListePions().get(tmp),i,j);
                         this.listeJoueurs[3].getListePions().get(tmp).setPositionXY(i,j);
-                        this.listeJoueurs[2].getListePions().get(tmp).setXYinitial(i,j);
+                        this.listeJoueurs[3].getListePions().get(tmp).setXYinitial(i,j);
                         tmp++;
                     }
                 }
@@ -103,45 +208,36 @@ public class Partie {
         return null;
     }
 
-    public void PlacerPion(Joueur joueur){
-        int X = -1;
-        int Y = -1;
+    public void PlacerPion(Joueur joueur,Pion pion){
+        int X = pion.getPositionX();
+        int Y = pion.getPositionY();
         int Couleur = joueur.getCouleur();
         int size = joueur.getListePions().size();
         if(size > 0){
-            int i =0;
-            while(i <size && joueur.getListePions().get(i).getEstEnJeu()){
-                i++;
-            }
-            if(i == size){
-                return;
-            }
-            Pion pion = joueur.getListePions().get(i);
+            this.plateau.getBoard()[X][Y].getListePion().remove(pion);
             if(Couleur == 0){
                 X = 6;
                 Y = 1;
-                this.plateau.getBoard()[X][Y].getListePion().add(pion);
             }
             else if(Couleur == 1){
                 X = 1;
                 Y = 8;
-                this.plateau.getBoard()[X][Y].getListePion().add(pion);
             }
             else if(Couleur == 2){
                 X = 8;
                 Y = 13;
-                this.plateau.getBoard()[X][Y].getListePion().add(pion);
             }
             else if(Couleur == 3){
                  X = 13;
                  Y = 6;
-                this.plateau.getBoard()[X][Y].getListePion().add(pion);
             }
-            this.plateau.getBoard()[pion.getXinitial()][pion.getXinitial()].getListePion().remove(pion);
-            System.out.println(X + "," + Y);
+            this.plateau.getBoard()[X][Y].getListePion().add(pion);
+            //this.plateau.getBoard()[pion.getXinitial()][pion.getXinitial()].getListePion().remove(pion);
+            //System.out.println(X + "," + Y);
+            System.out.println(pion.getXinitial() +";" +pion.getYinitial());
             pion.setPositionXY(X, Y);
             System.out.println(pion.getPositionX() +";" +pion.getPositionY());
-            joueur.getListePions().get(i).setEstEnJeu(true);
+            pion.setEstEnJeu(true);
         }
     }
 

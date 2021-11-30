@@ -15,6 +15,24 @@ public class Joueur {
         return this.ListePions;
     }
 
+    public boolean AdesPionsEnjeu(){
+        for (Pion pion : this.ListePions) {
+            if(pion.getEstEnJeu()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Pion IdToPion(int id){
+        for (Pion pion : this.ListePions) {
+            if(id == pion.getId()){
+                return pion;
+            }
+        }
+        return null;
+    }
+
     public int getCouleur() {
         return this.Couleur;
     }

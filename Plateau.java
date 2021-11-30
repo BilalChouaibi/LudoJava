@@ -104,7 +104,7 @@ public class Plateau {
     }
 
     public boolean isSafeZone(int X, int Y){
-        return (X == 6 && Y == 1) || (X == 1 && Y == 8) || (X == 8 && Y == 13) || (X == 13 && Y == 6);
+        return (X == 6 && Y == 1) || (X == 1 && Y == 8) || (X == 8 && Y == 13) || (X == 13 && Y == 6) || (X == 8 && Y ==3) || (X == 3 && Y ==6)  || (X == 6 && Y ==11)  || (X == 11 && Y ==8)  ;
     }
 
     /*
